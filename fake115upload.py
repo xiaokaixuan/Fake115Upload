@@ -10,7 +10,7 @@ import getopt
 import codecs
 import ctypes
 import platform
-from requests_toolbelt.multipart.encoder import MultipartEncoder 
+#from requests_toolbelt.multipart.encoder import MultipartEncoder 
 #from pycookiecheat import chrome_cookies
 #############################################################  Need your cookie
 COOKIES="your cookie"
@@ -162,16 +162,34 @@ def Upload_file_by_sha1(preid,fileid,filesize,filename,cid):  #quick
 	except:
 		return False
 def Upload_files_by_sha1_from_links(file,cid):  # sample : 1.mp4|26984894148|21AEB458C98643D5E5E4374C9D2ABFAAA4C6DA6
+	cids = []
 	for l in open(file,'r'):
 		link=l.split('|')
 		filename=link[0]
 		filesize=link[1]
 		fileid=link[2]
 		preid=link[3].strip()
+		if(filename == '++++begin'):
+			cids.append(cid)
+			cid = Create_folder(filesize, cid)
+			continue
+		elif(filename == '++++end'):
+			cid = cids.pop()
+			continue
 		if(len(fileid)!=40 and len(preid)!=40):
 			print 'Error Links'
 			return
 		Upload_file_by_sha1(preid,fileid,filesize,filename,cid)
+		
+def Create_folder(cname,pid):
+	URL="https://webapi.115.com/files/add"
+	postData={
+				'pid':pid,
+				'cname':cname,
+			  }
+	r = requests.post(URL, data=postData,headers=header,cookies=d_cookie)
+	res = json.loads(r.content)
+	return res['cid']
 
 def Upload_localFile_whith_sha1(filename,cid): #fast 
 	printInfo( "Trying fast upload...",False,"INFO")
@@ -218,7 +236,7 @@ def Upload_file_from_local(filename,cid=0):
 	except Exception as e:
 		print 'error',e
 	
-def Export_115_sha1_to_file(outfile,cid='0'): #
+def Export_115_sha1_to_file(outfile,cid='0',of=None): #
 	global FileCount
 	uri="http://webapi.115.com/files?aid=1&cid="+str(cid)+"&o=user_ptime&asc=0&offset=0&show_dir=1&limit=5000&code=&scid=&snap=0&natsort=1&source=&format=json"
 	url='http://aps.115.com/natsort/files.php?aid=1&cid='+str(cid)+'&o=file_name&asc=1&offset=0&show_dir=1&limit=5000&code=&scid=&snap=0&natsort=1&source=&format=json&type=&star=&is_share=&suffix=&custom_order=&fc_mix='
@@ -230,7 +248,8 @@ def Export_115_sha1_to_file(outfile,cid='0'): #
 	else:
 		r = requests.get(url,headers=header,cookies=d_cookie)
 		resp=json.loads(r.content)['data']
-	of= codecs.open(outfile,'a+', encoding='utf-8')
+	if(not of):
+		of= codecs.open(outfile,'a+', encoding='utf-8')
 	for d in resp:	
 		if d.has_key('fid'):
 			FileCount+=1
@@ -242,8 +261,10 @@ def Export_115_sha1_to_file(outfile,cid='0'): #
 				of.write(d['n']+'|'+str(d['s'])+'|'+d['sha']+'|'+preid+'\n')
 			continue
 		elif  d.has_key('cid'):
-			Export_115_sha1_to_file(outfile,d['cid'])
-	of.close()
+			of.write('++++begin|'+d['n']+'||\n')
+			Export_115_sha1_to_file(None,d['cid'],of)
+			of.write('++++end|'+d['n']+'||\n')
+	if(outfile): of.close()
 
 def Export_115_links_from_local(outfile):
 	print os.getcwd()
@@ -269,7 +290,7 @@ if __name__ == '__main__':
 				cid=v
 				ShowFolderPath(cid)
 			elif n in ('-u','--upload'):
-				Upload_file_from_local(v,cid)	
+				pass #Upload_file_from_local(v,cid)	
 			elif n in ('-i','--infile'):
 				Upload_files_by_sha1_from_links(v,cid)				
 			elif n in ('-o','--outfile'):
