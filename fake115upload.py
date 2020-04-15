@@ -130,6 +130,7 @@ def AddCookie(cook):
 			return False
 
 def Upload_file_by_sha1(preid,fileid,filesize,filename,cid):  #quick
+	global FileCount
 	if GetUserKey() is False: return	
 	fileid=fileid.upper()
 	quickid=fileid
@@ -150,16 +151,18 @@ def Upload_file_by_sha1(preid,fileid,filesize,filename,cid):  #quick
 				'target':target,
 				'fileid':fileid
 			  }
-	r = requests.post(URL, data=postData,headers=header)
-	#print r.content
 	try:
+		r = requests.post(URL, data=postData,headers=header)
+		#print r.content
 		if json.loads(r.content)['status']==2 and json.loads(r.content)['statuscode']==0:
-			printInfo(filename+' upload completed.',False,"OK")
+			FileCount += 1
+			printInfo(filename+' upload completed.',False,"OK:"+str(FileCount))
 			return True
 		else:
 			printInfo(filename+' upload failed.',True,"ERROR")
 			return False
 	except:
+		printInfo(filename+' upload excepted.',True,"ERROR")
 		return False
 def Upload_files_by_sha1_from_links(file,cid):  # sample : 1.mp4|26984894148|21AEB458C98643D5E5E4374C9D2ABFAAA4C6DA6
 	cids = []
