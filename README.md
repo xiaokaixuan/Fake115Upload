@@ -26,6 +26,6 @@ Options:
 
 # ScreenShot:
    
-  ![avatar](https://raw.githubusercontent.com/T3rry7f/Fake115Upload/master/screenshot.png)
+  ![avatar](./screenshot.png)
 
 
