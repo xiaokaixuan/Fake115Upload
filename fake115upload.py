@@ -182,6 +182,8 @@ def Upload_files_by_sha1_from_links(file,cid):  # sample : 1.mp4|26984894148|21A
 		if(len(fileid)!=40 or len(preid)!=40):
 			printInfo(filename+' Error Link',True,"ERROR")
 			continue
+		if (filename.startswith('115://')):
+			filename = filename[6:]
 		Upload_file_by_sha1(preid,fileid,filesize,filename,cid)
 		
 def Create_folder(cname,pid):

@@ -4,8 +4,8 @@
   推荐使用油猴插件版：[安装地址](https://greasyfork.org/ja/scripts/386724-115%E4%B8%80%E9%94%AE%E8%BD%AC%E5%AD%98)
   
 **Fork自 [T3rry7f/Fake115Upload](https://github.com/T3rry7f/Fake115Upload)**
-- [x] 增加导出时记录路径，导入时自动创建文件夹。
-
+- [x] ~~增加导出时记录路径，导入时自动创建文件夹。~~
+- [ ] 导出已不可用，可使用 [T3rry7f/Fake115Upload](https://github.com/T3rry7f/Fake115Upload) 或 [orzogc/fake115uploader](https://github.com/orzogc/fake115uploader) 。
 # Usage:
 ```
 $root:python Fake115Upload.py 
