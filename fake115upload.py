@@ -50,8 +50,8 @@ def printInfo(info,erorr,notice=''):
 	global std_out_handle
 	sysstr = platform.system()
 	if erorr==True:
-	  	if(sysstr =="Windows"):
-	  		std_out_handle = ctypes.windll.kernel32.GetStdHandle(-11)
+		if(sysstr =="Windows"):
+			std_out_handle = ctypes.windll.kernel32.GetStdHandle(-11)
 			set_cmd_text_color(0x0c,std_out_handle)
 			sys.stdout.write('['+notice+'] '+info+'\n')
 			resetColor()
@@ -207,7 +207,7 @@ def Upload_localFile_whith_sha1(filename,cid): #fast
 		sha.update(f.read())
 		TotalHASH=sha.hexdigest()
 		ret=Upload_file_by_sha1(BlockHASH,TotalHASH,GetFileSize(filename),os.path.basename(filename),cid)
-        return ret
+		return ret
 
 def Upload_file_from_local(filename,cid=0):  
 
